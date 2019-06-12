@@ -1,0 +1,19 @@
+{
+  "name": "aaas-edge-function",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "azure-storage": "^2.10.3",
+    "uuid": "^3.3.2",
+    "azure-iothub": "^1.9.5",
+    "azure-iot-common": "^1.9.5",
+    "azure-iot-device": "^1.9.5",
+    "azure-iot-device-amqp": "^1.9.5",
+    "azure-iot-device-http": "^1.9.5",
+    "azure-iot-device-mqtt": "^1.9.5"
+  },
+  "devDependencies": {}
+}
