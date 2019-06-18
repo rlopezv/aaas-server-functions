@@ -4,22 +4,13 @@ const TABLENAME = "DEVICEMESSAGE";
 
 const tableService = azureStorage.createTableService(process.env.AAAS_STORAGE_CONNECTION_STRING);
 
-module.exports = async function(context, queueMsg) {
-    let item = queueMsg;
+module.exports = async function(context, statusMsg) {
+    context.log('JavaScript ServiceBus queue trigger function processed message', statusMsg);
+    var item = statusMsg;
     let partition = "default";
-    if (item.type) {
-        switch (item.type) {
-            case 'status': context.bindings.outputStatusQueue = item;
-                break;
-            case 'data': context.bindings.outputTelemetryQueue = item;
-                break;
-            case 'alert': context.bindings.outputAlertQueue = item;
-                break;
-        }
-    }
     if (item) {
-        if (queueMsg && queueMsg.type) {
-            partition = queueMsg.type;
+        if (statusMsg && statusMsg.type) {
+            partition = statusMsg.type;
         }
         item["PartitionKey"] = partition;
         item["RowKey"] = new Date().getTime() + "_" + uuid();

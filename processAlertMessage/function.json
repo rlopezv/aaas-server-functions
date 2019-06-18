@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "name": "alertMsg",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "queueName": "alertqueue",
+      "connection": "aaasServiceBus_SERVICEBUS"
+    }
+  ]
+}

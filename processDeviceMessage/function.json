@@ -6,6 +6,28 @@
       "direction": "in",
       "queueName": "devicemessages",
       "connection": "aaasServiceBus_SERVICEBUS"
+    },
+    {
+      "type": "serviceBus",
+      "connection": "aaasServiceBus_SERVICEBUS",
+      "name": "outputStatusQueue",
+      "queueName": "statusqueue",
+      "direction": "out"
+    },
+    {
+      "type": "serviceBus",
+      "connection": "aaasServiceBus_SERVICEBUS",
+      "name": "outputAlertQueue",
+      "queueName": "alertqueue",
+      "direction": "out"
+    },
+    {
+      "type": "serviceBus",
+      "connection": "aaasServiceBus_SERVICEBUS",
+      "name": "outputTelemetryQueue",
+      "queueName": "telemetryqueue",
+      "direction": "out"
     }
+
   ]
 }

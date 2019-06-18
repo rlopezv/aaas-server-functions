@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "name": "telemetryMsg",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "queueName": "telemetryqueue",
+      "connection": "aaasServiceBus_SERVICEBUS"
+    }
+  ]
+}
