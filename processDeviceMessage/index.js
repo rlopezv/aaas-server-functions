@@ -1,43 +1,70 @@
 const azureStorage = require('azure-storage');
-const uuid = require('uuid/v1');
-const TABLENAME = "DEVICEMESSAGE";
 
-const tableService = azureStorage.createTableService(process.env.AAAS_STORAGE_CONNECTION_STRING);
+const EXCLUDED_DATA = ['gw_time','type'];
+const TIMESTAMPFIELDS = ['gateway_time','gw_time','edge_time'];
+
+
+function processData(data) {
+    var result = {};
+    let content;
+    if (typeof data === 'string') {
+        content = JSON.parse(data);
+    } else if (typeof data === 'object') {
+        content = data;
+    }
+    for (const key in content) {
+        if (EXCLUDED_DATA.indexOf(key)<0) {
+            result[key] = content[key];
+        }
+    }
+    return result;
+}
+
+function processMessage(data) {
+    var result = data;
+    //PROCESS TIMESTAMPFIELDS
+    for (const timeField of TIMESTAMPFIELDS) {
+        if (data[timeField]) {
+            let val = data[timeField];
+            if (typeof val === 'number') {
+                val = new Date(val);
+            } else if (typeof val === 'string') {
+                if (/^\d+$/.test(val)) {
+                    val = new Date(Number.parseInt(val));
+                } else {
+                    val = new Date(Date.parse(val));
+                }
+                
+            }
+            data[timeField] = val;
+        }
+    }
+    return result;
+}
+
 
 module.exports = async function(context, queueMsg) {
-    let item = queueMsg;
-    let partition = "default";
-    if (item.type) {
-        switch (item.type) {
-            case 'status': context.bindings.outputStatusQueue = item;
-                break;
-            case 'data': context.bindings.outputTelemetryQueue = item;
-                break;
-            case 'alert': context.bindings.outputAlertQueue = item;
-                break;
+    console.log(`Device message %s`,queueMsg);
+    var item;
+    if (queueMsg.type) {
+        item = processMessage(queueMsg);
+        item.server_time = new Date();
+        if (item.data) {
+            try {
+                item.data = processData(item.data);
+            } catch (e) {
+                console.error(e);
+            }
         }
     }
     if (item) {
-        if (queueMsg && queueMsg.type) {
-            partition = queueMsg.type;
+        switch (item.type) {
+             case 'STATUS': context.bindings.outputStatusQueue = item;
+                 break;
+             case 'DATA': context.bindings.outputTelemetryQueue = item;
+                 break;
+             case 'ALERT': context.bindings.outputAlertQueue = item;
+                   break;
         }
-        item["PartitionKey"] = partition;
-        item["RowKey"] = new Date().getTime() + "_" + uuid();
-        if (item.data) {
-            var measures = Object.keys(item.data);
-            measures.forEach(key=> 
-                {
-                    item[key]=item.data[key];
-                });
-        }
-        item.data = null;
-        // Use { echoContent: true } if you want to return the created item including the Timestamp & etag
-        tableService.insertEntity(TABLENAME, item, { echoContent: true }, function (error, result, resp) {
-            if (!error) {
-                console.log(JSON.stringify(resp, result, 2));
-            } else {
-                console.error(error.toString());
-            }
-        });
     }
 };
