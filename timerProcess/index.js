@@ -39,7 +39,11 @@ function processResultData(data, columns) {
     for (const row of data) {
         var element = {};
         for (const key of columns) {
-            element[key] = row[key];
+            if (typeof row[key] === 'boolean') {
+                element[key] = row[key]?1:0;
+            } else {
+                element[key] = row[key];
+            }
             if (TIME_VALUE.indexOf(key) >= 0) {
                 if (element[key]) {
                     element[key] = new Date(Date.parse(element[key]));
