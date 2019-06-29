@@ -2,7 +2,6 @@
 
 const azureStorage = require('azure-storage');
 const uuid = require('uuid/v1');
-const request = require('request');
 
 const TABLENAME = "ALERT";
 
