@@ -8,7 +8,7 @@ const WEATHER_TELEMETRY_TABLE = "TELEMETRYWEATHER";
 const PLANT_TELEMETRY_TABLE = "TELEMETRYPLANT";
 const MAX_ROWS = 20;
 
-const PERIOD = 0 * 1000;
+const PERIOD = 60 * 60 * 1000;
 
 const WEATHER_TELEMETRY_COLUMNS = ['device', 'gateway_time', 'edge_time', 'temperature', 'humidity', 'pressure', 'light', 'uv', 'rain'];
 const PLANT_TELEMETRY_COLUMNS = ['device', 'gateway_time', 'edge_time', 'temperature', 'humidity', 'light', 'sm'];
@@ -32,6 +32,35 @@ function publish(API_ENDPOINT, data) {
 
         });
     return true;
+}
+
+
+function processResultStatus(data, columns) {
+    var result = [];
+    var devices = [];
+    for (const row of data) {
+        if (devices.indexOf(row.device)<0) {
+        devices.push(row.device);
+        var element = {};
+        for (const key of columns) {
+            if (typeof row[key] === 'boolean') {
+                element[key] = row[key]?1:0;
+            } else {
+                element[key] = row[key];
+            }
+            if (TIME_VALUE.indexOf(key) >= 0) {
+                if (element[key]) {
+                    element[key] = new Date(Date.parse(element[key]));
+                } else {
+                    element[key] = new Date();
+                }
+                element[key] = new Date();
+            }
+        }
+        result.push(element);
+    }
+    }
+    return result;
 }
 
 function processResultData(data, columns) {
@@ -89,7 +118,7 @@ function processWeatherTelemetryResponse(data) {
 
 function processStatusResponse(data) {
     if (data && data.length > 0) {
-        publish(process.env.AAAS_POWERBI_STATUS_API, processResultData(data, STATUS_COLUMS));
+        publish(process.env.AAAS_POWERBI_STATUS_API, processResultStatus(data, STATUS_COLUMS));
     } else {
         console.log("No data to send for status");
     }
