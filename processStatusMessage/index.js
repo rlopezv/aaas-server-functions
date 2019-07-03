@@ -51,7 +51,7 @@ module.exports = async function(context, statusMsg) {
     let partition = "default";
     if (item) {
         if (item && item.device) {
-            partition = item.device;
+            //partition = item.device;
         }
         item["PartitionKey"] = partition;
         item["RowKey"] = (TIME_VALUE - Date.parse(item.server_time)) + "_" + uuid();

@@ -8,7 +8,7 @@ const WEATHER_TELEMETRY_TABLE = "TELEMETRYWEATHER";
 const PLANT_TELEMETRY_TABLE = "TELEMETRYPLANT";
 const MAX_ROWS = 20;
 
-const PERIOD = 60 * 60 * 1000;
+const PERIOD = 0 * 1000;
 
 const WEATHER_TELEMETRY_COLUMNS = ['device', 'gateway_time', 'edge_time', 'temperature', 'humidity', 'pressure', 'light', 'uv', 'rain'];
 const PLANT_TELEMETRY_COLUMNS = ['device', 'gateway_time', 'edge_time', 'temperature', 'humidity', 'light', 'sm'];
